@@ -1,4 +1,4 @@
-# E-commerce Application - Backend
+# E-commerce Application
 
 A full-stack e-commerce application built with Spring Boot (backend) and React (frontend).
 
