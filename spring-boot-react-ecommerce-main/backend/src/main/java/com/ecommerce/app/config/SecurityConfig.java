@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                // --- FIX FOR REACT FRONTEND - ALLOW STATIC FILES ---
+                // --- FIX FOR REACT FRONTEND - ALLOW STATIC FILES AND PAGES ---
                 .requestMatchers(
                     "/",
                     "/index.html",
@@ -60,7 +60,16 @@ public class SecurityConfig {
                     "/*.jpeg",
                     "/*.svg",
                     "/*.ico",
-                    "/vite.svg"
+                    "/vite.svg",
+                    // ADD ALL REACT ROUTES HERE
+                    "/login",
+                    "/register",
+                    "/admin/**",
+                    "/products/**",
+                    "/cart",
+                    "/checkout",
+                    "/orders/**",
+                    "/profile"
                 ).permitAll()
                 // --- END FIX ---
 
