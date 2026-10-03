@@ -42,71 +42,57 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // Enable CORS with configuration from CorsConfig
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
-
-            // Disable CSRF for stateless JWT authentication
             .csrf(csrf -> csrf.disable())
-
-            // Set session creation policy to STATELESS (no session cookies)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-
-            // Configure authorization rules
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints (no authentication required)
+                // --- FIX FOR REACT FRONTEND - ALLOW STATIC FILES ---
+                .requestMatchers(
+                    "/",
+                    "/index.html",
+                    "/assets/**",
+                    "/*.js",
+                    "/*.css",
+                    "/*.png",
+                    "/*.jpg",
+                    "/*.jpeg",
+                    "/*.svg",
+                    "/*.ico",
+                    "/vite.svg"
+                ).permitAll()
+                // --- END FIX ---
+
                 .requestMatchers(
                     "/api/auth/login",
                     "/api/auth/register"
                 ).permitAll()
-
-                // Public product endpoints (no authentication required)
                 .requestMatchers("/api/products/**").permitAll()
-
-                // Test endpoints (public for development)
                 .requestMatchers("/api/test/**").permitAll()
-
-                // H2 Console (for development database access)
                 .requestMatchers("/h2-console/**").permitAll()
-
-                // Admin-specific auth endpoints (requires ADMIN role)
                 .requestMatchers(
                     "/api/auth/unlock",
                     "/api/auth/register-admin"
                 ).hasRole("ADMIN")
-
-                // Admin endpoints - ALL /api/admin/** require ADMIN role (Defense in Depth)
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                // User endpoints - ALL /api/user/** require USER or ADMIN role (Defense in Depth)
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
-
-                // Cart endpoints - require USER or ADMIN role
                 .requestMatchers("/api/cart/**").hasAnyRole("USER", "ADMIN")
-
-                // Order endpoints - require USER or ADMIN role
                 .requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
-
-                // All other requests require authentication
                 .anyRequest().authenticated()
             );
 
-        // Configure exception handling
         http.exceptionHandling(exception -> exception
-            .accessDeniedHandler(customAccessDeniedHandler)      // 403 Forbidden
-            .authenticationEntryPoint(customAuthenticationEntryPoint)  // 401 Unauthorized
+            .accessDeniedHandler(customAccessDeniedHandler)
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
         );
 
-        // Add JWT filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Allow H2 console frame (development only)
         http.headers(headers -> headers
             .frameOptions(frame -> frame.disable())
         );
 
         return http.build();
     }
-
 }
