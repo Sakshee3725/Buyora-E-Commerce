@@ -1,20 +1,39 @@
-# Stage 1: Build Frontend
-FROM node:18 AS frontend-build
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npm run build
+import axios from 'axios';
 
-# Stage 2: Backend + Frontend together
-FROM node:18
-WORKDIR /app
-COPY backend/package*.json ./backend/
-WORKDIR /app/backend
-RUN npm install
-COPY backend/ ./
-# Copy built frontend to backend's public folder
-COPY --from=frontend-build /app/frontend/dist ./public
+// Create axios instance with base configuration
+const api = axios.create({
+  baseURL: '/api', // Vite proxy will forward to http://localhost:8082
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-EXPOSE 10000
-CMD ["node", "server.js"]
+// Request interceptor to add auth token to requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for global error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle 401 Unauthorized globally
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Could redirect to login page here
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
