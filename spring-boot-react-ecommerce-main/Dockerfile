@@ -1,39 +1,22 @@
-import axios from 'axios';
+# Stage 1: Build React frontend
+FROM node:18 AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
 
-// Create axios instance with base configuration
-const api = axios.create({
-  baseURL: '/api', // Vite proxy will forward to http://localhost:8082
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+# Stage 2: Build Spring Boot
+FROM maven:3.9-eclipse-temurin-17 AS backend-build
+WORKDIR /app
+COPY backend/pom.xml ./
+COPY backend/src ./src
+COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
+RUN mvn clean package -DskipTests
 
-// Request interceptor to add auth token to requests
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor for global error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Handle 401 Unauthorized globally
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Could redirect to login page here
-    }
-    return Promise.reject(error);
-  }
-);
-
-export default api;
+# Stage 3: Run
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=backend-build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
