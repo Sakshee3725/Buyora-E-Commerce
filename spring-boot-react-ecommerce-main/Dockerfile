@@ -4,7 +4,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
-RUN npm run build
+RUN npx vite build
 
 # Stage 2: Build Spring Boot
 FROM maven:3.9-eclipse-temurin-17 AS backend-build
@@ -21,5 +21,4 @@ RUN mkdir -p /app/data
 COPY --from=backend-build /app/target/*.jar app.jar
 EXPOSE 8080
 ENV PORT=8080
-ENV SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/ecommerce_db
 CMD ["java", "-jar", "app.jar"]
