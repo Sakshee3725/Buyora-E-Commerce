@@ -17,6 +17,9 @@ RUN mvn clean package -DskipTests
 # Stage 3: Run
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
+RUN mkdir -p /app/data
 COPY --from=backend-build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENV PORT=8080
+ENV SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/ecommerce_db
+CMD ["java", "-jar", "app.jar"]
