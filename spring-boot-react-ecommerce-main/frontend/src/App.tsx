@@ -2,9 +2,9 @@ import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { useAuth, AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
-import Register from './components/Register';
 
 import Login from './components/Login';
+import Register from './components/Register'; // <-- ADDED
 import Home from './components/Home';
 import ProductDetails from './components/ProductDetails';
 import ShoppingCart from './components/ShoppingCart';
@@ -70,17 +70,19 @@ function App() {
 
             <Routes>
 
-              {/* ========================================
-                  LOGIN
-              ======================================== */}
+              {/* LOGIN - PUBLIC */}
               <Route
                 path="/login"
                 element={<Login />}
               />
 
-              {/* ========================================
-                  CUSTOMER HOME
-              ======================================== */}
+              {/* REGISTER - PUBLIC - THIS WAS MISSING */}
+              <Route
+                path="/register"
+                element={<Register />}
+              />
+
+              {/* CUSTOMER HOME */}
               <Route
                 path="/dashboard"
                 element={
@@ -90,9 +92,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  PRODUCT DETAILS
-              ======================================== */}
+              {/* PRODUCT DETAILS */}
               <Route
                 path="/products/:id"
                 element={
@@ -102,9 +102,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  SHOPPING CART
-              ======================================== */}
+              {/* SHOPPING CART */}
               <Route
                 path="/cart"
                 element={
@@ -114,9 +112,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  CHECKOUT
-              ======================================== */}
+              {/* CHECKOUT */}
               <Route
                 path="/checkout"
                 element={
@@ -126,9 +122,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  CUSTOMER ORDER HISTORY
-              ======================================== */}
+              {/* CUSTOMER ORDER HISTORY */}
               <Route
                 path="/orders"
                 element={
@@ -138,9 +132,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  CUSTOMER ORDER DETAILS
-              ======================================== */}
+              {/* CUSTOMER ORDER DETAILS */}
               <Route
                 path="/orders/:id"
                 element={
@@ -150,9 +142,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  ADMIN DASHBOARD
-              ======================================== */}
+              {/* ADMIN DASHBOARD */}
               <Route
                 path="/admin"
                 element={
@@ -162,9 +152,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  ADMIN - MANAGE PRODUCTS
-              ======================================== */}
+              {/* ADMIN - MANAGE PRODUCTS */}
               <Route
                 path="/admin/products"
                 element={
@@ -174,9 +162,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  ADMIN - MANAGE ORDERS
-              ======================================== */}
+              {/* ADMIN - MANAGE ORDERS */}
               <Route
                 path="/admin/orders"
                 element={
@@ -186,9 +172,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  ADMIN - ORDER DETAILS
-              ======================================== */}
+              {/* ADMIN - ORDER DETAILS */}
               <Route
                 path="/admin/orders/:id"
                 element={
@@ -198,9 +182,7 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  ADMIN - MANAGE USERS
-              ======================================== */}
+              {/* ADMIN - MANAGE USERS */}
               <Route
                 path="/admin/users"
                 element={
@@ -210,27 +192,23 @@ function App() {
                 }
               />
 
-              {/* ========================================
-                  ROOT
-              ======================================== */}
+              {/* ROOT */}
               <Route
                 path="/"
                 element={
                   <Navigate
-                    to="/dashboard"
+                    to="/login"
                     replace
                   />
                 }
               />
 
-              {/* ========================================
-                  UNKNOWN URL
-              ======================================== */}
+              {/* UNKNOWN URL */}
               <Route
                 path="*"
                 element={
                   <Navigate
-                    to="/dashboard"
+                    to="/login"
                     replace
                   />
                 }
