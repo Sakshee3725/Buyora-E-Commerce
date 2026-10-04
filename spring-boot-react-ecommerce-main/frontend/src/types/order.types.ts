@@ -2,14 +2,18 @@
  * Order type definitions matching backend DTOs
  */
 
-// Order status enum matching backend OrderStatus
-export enum OrderStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED'
-}
+// Order status constants
+export const OrderStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+// Order status type
+export type OrderStatus =
+  (typeof OrderStatus)[keyof typeof OrderStatus];
 
 // Checkout request with payment card details
 export interface CheckoutRequest {
