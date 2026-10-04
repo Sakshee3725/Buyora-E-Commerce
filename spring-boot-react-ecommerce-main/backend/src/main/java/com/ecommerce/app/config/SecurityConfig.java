@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                // --- FIX FOR REACT FRONTEND - ALLOW STATIC FILES AND PAGES ---
+                // STATIC FILES - React build
                 .requestMatchers(
                     "/",
                     "/index.html",
@@ -61,18 +61,23 @@ public class SecurityConfig {
                     "/*.svg",
                     "/*.ico",
                     "/vite.svg",
-                    // ADD ALL REACT ROUTES HERE
+                    "/manifest.json"
+                ).permitAll()
+                // REACT ROUTES - IMPORTANT FIX
+                .requestMatchers(
                     "/login",
                     "/register",
-                    "/admin/**",
+                    "/products",
                     "/products/**",
                     "/cart",
                     "/checkout",
+                    "/orders",
                     "/orders/**",
-                    "/profile"
+                    "/profile",
+                    "/admin",
+                    "/admin/**"
                 ).permitAll()
-                // --- END FIX ---
-
+                // PUBLIC APIs
                 .requestMatchers(
                     "/api/auth/login",
                     "/api/auth/register"
@@ -80,11 +85,13 @@ public class SecurityConfig {
                 .requestMatchers("/api/products/**").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
+                // ADMIN ONLY
                 .requestMatchers(
                     "/api/auth/unlock",
                     "/api/auth/register-admin"
                 ).hasRole("ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // USER + ADMIN
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/cart/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
