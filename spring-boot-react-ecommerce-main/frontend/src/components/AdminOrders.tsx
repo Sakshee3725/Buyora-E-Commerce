@@ -174,9 +174,7 @@ const AdminOrders = () => {
     (order) => order.status === 'PENDING'
   ).length;
 
-  const confirmedCount = orders.filter(
-    (order) => order.status === 'CONFIRMED'
-  ).length;
+ 
 
   const processingCount = orders.filter(
     (order) => order.status === 'PROCESSING'
