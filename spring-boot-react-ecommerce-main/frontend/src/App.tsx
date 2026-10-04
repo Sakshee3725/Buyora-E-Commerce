@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { useAuth, AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import Register from './components/Register';
 
 import Login from './components/Login';
 import Home from './components/Home';
