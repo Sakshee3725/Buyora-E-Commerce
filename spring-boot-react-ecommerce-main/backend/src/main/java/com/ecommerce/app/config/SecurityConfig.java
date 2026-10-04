@@ -1,6 +1,5 @@
-package com.buyora.config;
+package com.ecommerce.app.config;
 
-import com.buyora.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,51 +38,13 @@ public class SecurityConfig {
                 .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))
                 .disable()
             )
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.disable()) // For H2 Console
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // PUBLIC - Auth APIs
                 .requestMatchers("/api/auth/**").permitAll()
-                
-                // PUBLIC - H2 Console
                 .requestMatchers("/h2-console/**").permitAll()
-                
-                // PUBLIC - Frontend pages (IMPORTANT - fixes your 401 on /dashboard)
-                .requestMatchers(
-                    "/",
-                    "/login",
-                    "/register",
-                    "/dashboard",
-                    "/dashboard/**",
-                    "/products",
-                    "/products/**",
-                    "/cart",
-                    "/checkout",
-                    "/orders",
-                    "/orders/**",
-                    "/admin",
-                    "/admin/**"
-                ).permitAll()
-                
-                // PUBLIC - Static resources for React build
-                .requestMatchers(
-                    "/static/**",
-                    "/assets/**",
-                    "/*.js",
-                    "/*.css",
-                    "/*.ico",
-                    "/*.json",
-                    "/index.html"
-                ).permitAll()
-                
-                // PROTECTED - All API endpoints need JWT
+                .requestMatchers("/", "/login", "/register", "/dashboard", "/dashboard/**", "/products/**", "/cart", "/checkout", "/orders/**", "/admin/**", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.ico", "/index.html").permitAll()
                 .requestMatchers("/api/**").authenticated()
-                
-                // Everything else public (for React Router)
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -98,7 +59,6 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization"));
-        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
