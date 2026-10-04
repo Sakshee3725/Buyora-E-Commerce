@@ -21,4 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Find active products by brand
     List<Product> findByActiveTrueAndBrand(String brand);
+
+    // Check whether a product already exists
+    boolean existsByName(String name);
 }
